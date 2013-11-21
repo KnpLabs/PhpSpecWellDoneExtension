@@ -1,0 +1,14 @@
+{
+    "name": "knplabs/phpspec-welldone-extension",
+    "require": {
+        "phpspec/phpspec": "~2.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pedrotroller",
+            "email": "plazanet.pierre@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
