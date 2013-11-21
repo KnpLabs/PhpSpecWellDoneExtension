@@ -17,5 +17,9 @@ class StatusCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $container = $this->getApplication()->getContainer();
+        $container->configure();
+
+        die(var_dump($container->get('locator.resource_manager')->locateResources('')));
     }
 }
