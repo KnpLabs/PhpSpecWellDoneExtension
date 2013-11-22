@@ -3,10 +3,11 @@
 namespace Knp\PhpSpec\WellDone;
 
 use PhpSpec\Extension\ExtensionInterface;
-use PhpSpec\Util\Filesystem;
 use PhpSpec\ServiceContainer;
 use Symfony\Component\Console\Input\InputArgument;
 use Knp\PhpSpec\WellDone\Locator\NoSpecLocator;
+use Knp\PhpSpec\WellDone\Locator\ResourceInspector;
+use Knp\PhpSpec\WellDone\Util\Filesystem;
 
 class Extension implements ExtensionInterface
 {
@@ -16,6 +17,7 @@ class Extension implements ExtensionInterface
         $this->setupCommands($container);
         $this->setupLocators($container);
         $this->setupFormatter($container);
+        $this->setupUtils($container);
     }
 
     protected function setupConsole(ServiceContainer $container)
@@ -33,7 +35,7 @@ class Extension implements ExtensionInterface
     protected function setupCommands(ServiceContainer $container)
     {
         $container->setShared('console.commands.status', function ($c) {
-            return new Console\Command\StatusCommand(new Filesystem, $c->get('console.formater.well.progress'));
+            return new Console\Command\StatusCommand($c->get('well.utils.filesystem'), $c->get('well.console.formater.progress'));
         });
     }
 
@@ -49,7 +51,7 @@ class Extension implements ExtensionInterface
 
                 $c->set(sprintf('locator.locators.no_spec_%s_suite', $name),
                     function ($c) use ($suite) {
-                        return new NoSpecLocator($suite['srcNS'], $suite['specPrefix'], $suite['srcPath'], $suite['specPath']);
+                        return new NoSpecLocator($c->get('well.utils.inspector'), $suite['srcNS'], $suite['specPrefix'], $suite['srcPath'], $suite['specPath']);
                     }
                 );
             }
@@ -58,8 +60,19 @@ class Extension implements ExtensionInterface
 
     protected function setupFormatter(ServiceContainer $container)
     {
-        $container->setShared('console.formater.well.progress', function () {
-            return new Formater\ProgressFormater(new Filesystem);
+        $container->setShared('well.console.formater.progress', function ($c) {
+            return new Formater\ProgressFormater($c->get('well.utils.filesystem'));
+        });
+    }
+
+    protected function setupUtils(ServiceContainer $container)
+    {
+        $container->setShared('well.utils.filesystem', function () {
+            return new Filesystem;
+        });
+
+        $container->setShared('well.utils.inspector', function ($c) {
+            return new ResourceInspector($c->get('well.utils.filesystem'));
         });
     }
 

@@ -3,17 +3,16 @@
 namespace Knp\PhpSpec\WellDone\Locator;
 
 use PhpSpec\Locator\PSR0\PSR0Locator;
-use PhpSpec\Util\Filesystem;
 use PhpSpec\Locator\PSR0\PSR0Resource;
+use Knp\PhpSpec\WellDone\Locator\ResourceInspector;
 
 class NoSpecLocator extends PSR0Locator
 {
-    public function __construct($srcNamespace = '', $specNamespacePrefix = 'spec',
-                                $srcPath = 'src', $specPath = '.', Filesystem $filesystem = null)
+    public function __construct(ResourceInspector $inspector, $srcNamespace = '', $specNamespacePrefix = 'spec', $srcPath = 'src', $specPath = '.')
     {
-        $this->filesystem = $filesystem ?: new Filesystem;
+        $this->inspector = $inspector;
 
-        parent::__construct($srcNamespace, $specNamespacePrefix, $srcPath, $specPath, $filesystem);
+        parent::__construct($srcNamespace, $specNamespacePrefix, $srcPath, $specPath, $this->inspector->getFilesystem());
     }
 
     public function getAllResources()
@@ -23,14 +22,17 @@ class NoSpecLocator extends PSR0Locator
 
     protected function findNotSpecResources($path)
     {
-        if (!$this->filesystem->pathExists($path)) {
+        if (!$this->getFilesystem()->pathExists($path)) {
             return array();
         }
 
         $resources = array();
-        foreach ($this->filesystem->findPhpFilesIn($path) as $file) {
+        foreach ($this->getFilesystem()->findPhpFilesIn($path) as $file) {
             $resource = $this->createResourceFromSpecFile($file->getRealPath());
-            if ($this->isClassFile($resource) && !$this->asSpecFile($resource)) {
+            if ($this->inspector->isClass($resource)
+                && $this->inspector->isAbstract($resource)
+                && !$this->inspector->hasSpec($resource)
+            ) {
                 $resources[] = $resource;
             }
         }
@@ -51,21 +53,9 @@ class NoSpecLocator extends PSR0Locator
         return new PSR0Resource(explode(DIRECTORY_SEPARATOR, $relative), $this);
     }
 
-    private function isClassFile(PSR0Resource $resource)
+    protected function getFilesystem()
     {
-        $tokens = token_get_all(file_get_contents($resource->getSrcFilename()));
-
-        foreach ($tokens as $token) {
-            if (is_array($token) && current($token) === T_CLASS) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->inspector->getFilesystem();
     }
 
-    private function asSpecFile(PSR0Resource $resource)
-    {
-        return $this->filesystem->pathExists($resource->getSpecFilename());
-    }
 }
