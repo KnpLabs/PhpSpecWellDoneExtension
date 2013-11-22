@@ -26,11 +26,6 @@ class StatusCommand extends Command
         $container = $this->getApplication()->getContainer();
         $container->configure();
 
-        $io = $container->get('console.io');
-
-        $spec   = [];
-        $noSpec = [];
-
         $resources = $container->get('locator.resource_manager')->locateResources('');
 
         foreach ($this->buildMessages($resources) as $message) {

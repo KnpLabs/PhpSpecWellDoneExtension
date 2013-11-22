@@ -69,7 +69,7 @@ class Extension implements ExtensionInterface
 
     protected function setupFormatter(ServiceContainer $container)
     {
-        $container->setShared('console.formater.well.progress', function($c) {
+        $container->setShared('console.formater.well.progress', function() {
             return new Formater\ProgressFormater(new Filesystem);
         });
     }
