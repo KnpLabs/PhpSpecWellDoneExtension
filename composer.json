@@ -15,8 +15,12 @@
     "license": "MIT",
     "authors": [
         {
+            "name": "KnpLabs",
+            "homepage": "http://knplabs.com"
+        },
+        {
             "name": "Pedrotroller",
-            "email": "plazanet.pierre@gmail.com"
+            "homepage": "https://github.com/PedroTroller"
         }
     ],
     "minimum-stability": "dev"
