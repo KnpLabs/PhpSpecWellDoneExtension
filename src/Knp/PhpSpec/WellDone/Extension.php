@@ -3,6 +3,7 @@
 namespace Knp\PhpSpec\WellDone;
 
 use PhpSpec\Extension\ExtensionInterface;
+use PhpSpec\Util\Filesystem;
 use PhpSpec\ServiceContainer;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,6 +17,7 @@ class Extension implements ExtensionInterface
         $this->setupConsole($container);
         $this->setupCommands($container);
         $this->setupLocators($container);
+        $this->setupFormatter($container);
     }
 
     protected function setupConsole(ServiceContainer $container)
@@ -33,7 +35,7 @@ class Extension implements ExtensionInterface
     protected function setupCommands(ServiceContainer $container)
     {
         $container->setShared('console.commands.status', function($c) {
-            return new Console\Command\StatusCommand;
+            return new Console\Command\StatusCommand(new Filesystem, $c->get('console.formater.well.progress'));
         });
     }
 
@@ -62,6 +64,13 @@ class Extension implements ExtensionInterface
                     }
                 );
             }
+        });
+    }
+
+    protected function setupFormatter(ServiceContainer $container)
+    {
+        $container->setShared('console.formater.well.progress', function($c) {
+            return new Formater\ProgressFormater(new Filesystem);
         });
     }
 }

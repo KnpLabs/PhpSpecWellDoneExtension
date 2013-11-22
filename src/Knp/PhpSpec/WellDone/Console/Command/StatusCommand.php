@@ -2,17 +2,23 @@
 
 namespace Knp\PhpSpec\WellDone\Console\Command;
 
+use PhpSpec\Util\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Knp\PhpSpec\WellDone\Formater\ProgressFormater;
 
 class StatusCommand extends Command
 {
-    public function __construct()
+    protected $filesystem;
+    protected $formater;
+
+    public function __construct(Filesystem $filesystem, ProgressFormater $formater)
     {
         parent::__construct('status');
 
-        $this->setDefinition(array());
+        $this->filesystem = $filesystem;
+        $this->formater   = $formater;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -20,6 +26,25 @@ class StatusCommand extends Command
         $container = $this->getApplication()->getContainer();
         $container->configure();
 
-        die(var_dump($container->get('locator.resource_manager')->locateResources('')));
+        $io = $container->get('console.io');
+
+        $spec   = [];
+        $noSpec = [];
+
+        $resources = $container->get('locator.resource_manager')->locateResources('');
+
+        foreach ($this->buildMessages($resources) as $message) {
+            $output->writeln($message);
+        }
+
+    }
+
+    protected function buildMessages(array $resources)
+    {
+        return array_merge(
+            [ '', $this->formater->buildProgressBar($resources) ],
+            [ '', $this->formater->buildState($resources) ],
+            $this->formater->buildTrace($resources)
+        );
     }
 }
