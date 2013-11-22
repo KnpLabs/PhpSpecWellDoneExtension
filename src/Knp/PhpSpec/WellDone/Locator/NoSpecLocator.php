@@ -48,7 +48,6 @@ class NoSpecLocator extends PSR0Locator
         $relative = substr($path, strlen($p), -4);
         $relative = preg_replace('/Spec$/', '', $relative);
 
-
         return new PSR0Resource(explode(DIRECTORY_SEPARATOR, $relative), $this);
     }
 
@@ -58,7 +57,6 @@ class NoSpecLocator extends PSR0Locator
 
         foreach ($tokens as $token) {
             if (is_array($token) && current($token) === T_CLASS) {
-
                 return true;
             }
         }

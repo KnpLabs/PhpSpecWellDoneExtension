@@ -5,9 +5,7 @@ namespace Knp\PhpSpec\WellDone;
 use PhpSpec\Extension\ExtensionInterface;
 use PhpSpec\Util\Filesystem;
 use PhpSpec\ServiceContainer;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Knp\PhpSpec\WellDone\Locator\NoSpecLocator;
 
 class Extension implements ExtensionInterface
@@ -34,14 +32,14 @@ class Extension implements ExtensionInterface
 
     protected function setupCommands(ServiceContainer $container)
     {
-        $container->setShared('console.commands.status', function($c) {
+        $container->setShared('console.commands.status', function ($c) {
             return new Console\Command\StatusCommand(new Filesystem, $c->get('console.formater.well.progress'));
         });
     }
 
     protected function setupLocators(ServiceContainer $container)
     {
-        $container->addConfigurator(function($c) {
+        $container->addConfigurator(function ($c) {
             $suites = $c->getParam('suites', array('main' => ''));
 
             foreach ($suites as $name => $suite) {
@@ -59,7 +57,7 @@ class Extension implements ExtensionInterface
                 }
 
                 $c->set(sprintf('locator.locators.no_spec_%s_suite', $name),
-                    function($c) use($srcNS, $specPrefix, $srcPath, $specPath) {
+                    function ($c) use ($srcNS, $specPrefix, $srcPath, $specPath) {
                         return new NoSpecLocator($srcNS, $specPrefix, $srcPath, $specPath);
                     }
                 );
@@ -69,7 +67,7 @@ class Extension implements ExtensionInterface
 
     protected function setupFormatter(ServiceContainer $container)
     {
-        $container->setShared('console.formater.well.progress', function() {
+        $container->setShared('console.formater.well.progress', function () {
             return new Formater\ProgressFormater(new Filesystem);
         });
     }
