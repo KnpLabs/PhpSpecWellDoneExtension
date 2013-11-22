@@ -1,5 +1,6 @@
 {
     "name": "knplabs/phpspec-welldone-extension",
+    "description": "Extension for PHPSPEC. Find out which classes are not specified. ",
     "require": {
         "phpspec/phpspec": "~2.0"
     },
