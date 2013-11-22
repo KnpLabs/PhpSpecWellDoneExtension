@@ -43,22 +43,13 @@ class Extension implements ExtensionInterface
             $suites = $c->getParam('suites', array('main' => ''));
 
             foreach ($suites as $name => $suite) {
-                $suite      = is_array($suite) ? $suite : array('namespace' => $suite);
-                $srcNS      = $suite['namespace'];
-                $specPrefix = isset($suite['spec_prefix']) ? $suite['spec_prefix'] : 'spec';
-                $srcPath    = isset($suite['src_path']) ? $suite['src_path'] : 'src';
-                $specPath   = isset($suite['spec_path']) ? $suite['spec_path'] : '.';
 
-                if (!is_dir($srcPath)) {
-                    mkdir($srcPath, 0777, true);
-                }
-                if (!is_dir($specPath)) {
-                    mkdir($specPath, 0777, true);
-                }
+                $suite = $this->loadSuiteInformations($suite);
+                $this->buildDirectories($suite);
 
                 $c->set(sprintf('locator.locators.no_spec_%s_suite', $name),
-                    function ($c) use ($srcNS, $specPrefix, $srcPath, $specPath) {
-                        return new NoSpecLocator($srcNS, $specPrefix, $srcPath, $specPath);
+                    function ($c) use ($suite) {
+                        return new NoSpecLocator($suite['srcNS'], $suite['specPrefix'], $suite['srcPath'], $suite['specPath']);
                     }
                 );
             }
@@ -70,5 +61,27 @@ class Extension implements ExtensionInterface
         $container->setShared('console.formater.well.progress', function () {
             return new Formater\ProgressFormater(new Filesystem);
         });
+    }
+
+    protected function loadSuiteInformations($suite)
+    {
+        $result               = [];
+        $suite                = is_array($suite) ? $suite : array('namespace' => $suite);
+        $result['srcNS']      = $suite['namespace'];
+        $result['specPrefix'] = isset($suite['spec_prefix']) ? $suite['spec_prefix'] : 'spec';
+        $result['srcPath']    = isset($suite['src_path']) ? $suite['src_path'] : 'src';
+        $result['specPath']   = isset($suite['spec_path']) ? $suite['spec_path'] : '.';
+
+        return $result;
+    }
+
+    protected function buildDirectories(array $suite)
+    {
+        if (!is_dir($suite['srcPath'])) {
+            mkdir($suite['srcPath'], 0777, true);
+        }
+        if (!is_dir($suite['specPath'])) {
+            mkdir($suite['specPath'], 0777, true);
+        }
     }
 }
