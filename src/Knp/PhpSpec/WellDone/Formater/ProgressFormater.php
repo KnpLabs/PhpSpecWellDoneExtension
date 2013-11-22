@@ -76,6 +76,13 @@ class ProgressFormater
         return $result;
     }
 
+    public function buildCode($resources)
+    {
+        $notDone = $this->filter($resources, false);
+
+        return 0 === count($notDone) ? 0 : 1;
+    }
+
     protected function filter(array $resources, $withSpec = true)
     {
         $result = [];

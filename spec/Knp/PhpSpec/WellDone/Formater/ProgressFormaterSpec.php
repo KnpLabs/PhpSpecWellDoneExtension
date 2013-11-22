@@ -91,4 +91,20 @@ class ProgressFormaterSpec extends ObjectBehavior
             ''
         ]);
     }
+
+    function it_should_return_code_1_when_all_classes_dont_have_spec($resource1, $resource2, $resource3)
+    {
+        $resources = [$resource1, $resource2, $resource3];
+
+        $this->buildCode($resources)->shouldReturn(1);
+    }
+
+    function it_should_return_code_0_when_all_classes_have_spec($filesystem, $resource1, $resource2, $resource3)
+    {
+        $resources = [$resource1, $resource2, $resource3];
+        $filesystem->pathExists('/home/user/php/spec/File2Spec.php')->willReturn(true);
+        $filesystem->pathExists('/home/user/php/spec/File3Spec.php')->willReturn(true);
+
+        $this->buildCode($resources)->shouldReturn(0);
+    }
 }

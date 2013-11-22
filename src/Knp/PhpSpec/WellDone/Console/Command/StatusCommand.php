@@ -32,6 +32,7 @@ class StatusCommand extends Command
             $output->writeln($message);
         }
 
+        return $this->formater->buildCode($resources);
     }
 
     protected function buildMessages(array $resources)
