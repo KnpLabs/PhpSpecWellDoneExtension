@@ -30,7 +30,7 @@ class NoSpecLocator extends PSR0Locator
         foreach ($this->getFilesystem()->findPhpFilesIn($path) as $file) {
             $resource = $this->createResourceFromSpecFile($file->getRealPath());
             if ($this->inspector->isClass($resource)
-                && $this->inspector->isAbstract($resource)
+                && !$this->inspector->isAbstract($resource)
                 && !$this->inspector->hasSpec($resource)
             ) {
                 $resources[] = $resource;
