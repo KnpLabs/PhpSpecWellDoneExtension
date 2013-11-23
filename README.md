@@ -10,6 +10,8 @@ KnpLabs - PHPSPEC WellDone Extension
 php composer.phar require knplabs/phpspec-welldone-extension dev-master
 ```
 
+**Configuration**
+
 ```yml
 #phpspec.yml
 extensions:
