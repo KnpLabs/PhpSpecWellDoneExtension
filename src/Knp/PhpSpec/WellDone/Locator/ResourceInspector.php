@@ -34,6 +34,28 @@ class ResourceInspector
         return $this->is($resource, T_ABSTRACT);
     }
 
+    public function matchQueries(PSR0Resource $resource, $queries, $delim = ',')
+    {
+        foreach (explode($delim, $queries) as $query) {
+            if (true === $this->matchQuery($resource, trim($query))) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function matchQuery(PSR0Resource $resource, $query)
+    {
+        $query = str_replace('/', '\\', $query);
+        $query = str_replace('\\', '\\\\', $query);
+        $query = str_replace('*', '(.*)', $query);
+        $query = sprintf('/^%s$/', $query);
+
+        return 1 == preg_match($query, $resource->getSrcClassname());
+    }
+
     protected function is(PSR0Resource $resource, $tag)
     {
         $tokens = $this->filesystem->getTokens($resource->getSrcFilename());

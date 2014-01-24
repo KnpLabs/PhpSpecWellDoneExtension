@@ -5,6 +5,7 @@ namespace Knp\PhpSpec\WellDone;
 use PhpSpec\Extension\ExtensionInterface;
 use PhpSpec\ServiceContainer;
 use Symfony\Component\Console\Input\InputArgument;
+use Knp\PhpSpec\WellDone\Locator\ResourceManager;
 use Knp\PhpSpec\WellDone\Locator\NoSpecLocator;
 use Knp\PhpSpec\WellDone\Locator\ResourceInspector;
 use Knp\PhpSpec\WellDone\Util\Filesystem;
@@ -41,6 +42,17 @@ class Extension implements ExtensionInterface
 
     protected function setupLocators(ServiceContainer $container)
     {
+        $container->setShared('locator.resource_manager', function ($c) {
+            $manager = new ResourceManager();
+
+            array_map(
+                array($manager, 'registerLocator'),
+                $c->getByPrefix('locator.locators')
+            );
+
+            return $manager;
+        });
+
         $container->addConfigurator(function ($c) {
             $suites = $c->getParam('suites', array('main' => ''));
 

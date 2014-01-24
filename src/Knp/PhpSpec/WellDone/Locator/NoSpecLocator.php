@@ -6,7 +6,7 @@ use PhpSpec\Locator\PSR0\PSR0Locator;
 use PhpSpec\Locator\PSR0\PSR0Resource;
 use Knp\PhpSpec\WellDone\Locator\ResourceInspector;
 
-class NoSpecLocator extends PSR0Locator
+class NoSpecLocator extends PSR0Locator implements ExclusionLocatorInterface
 {
     public function __construct(ResourceInspector $inspector, $srcNamespace = '', $specNamespacePrefix = 'spec', $srcPath = 'src', $specPath = '.')
     {
@@ -20,7 +20,18 @@ class NoSpecLocator extends PSR0Locator
         return $this->findNotSpecResources($this->getFullSrcPath());
     }
 
-    protected function findNotSpecResources($path)
+    public function findResourcesWithExclusion($query)
+    {
+        return $this->findNotSpecResources($this->getFullSrcPath(), $query);
+    }
+
+    public function supportsExclusionQuery($query)
+    {
+        $query = preg_replace('/[A-Za-z_\\*]/', '', $query);
+        return empty($query);
+    }
+
+    protected function findNotSpecResources($path, $query = null)
     {
         if (!$this->getFilesystem()->pathExists($path)) {
             return array();
@@ -32,7 +43,9 @@ class NoSpecLocator extends PSR0Locator
             if ($this->inspector->isClass($resource)
                 && !$this->inspector->isAbstract($resource)
                 && !$this->inspector->hasSpec($resource)
+                && !$this->inspector->matchQueries($resource, $query)
             ) {
+
                 $resources[] = $resource;
             }
         }

@@ -23,3 +23,23 @@ extensions:
 ```bash
 ./bin/phpspec status
 ```
+
+**Add exclusion (via phpspec.yml)**
+
+```yml
+#phpspec.yml
+knp.welldone.exclusion:
+    - "*Controller"
+    - "App\Entity\*"
+
+extensions:
+    - Knp\PhpSpec\WellDone\Extension
+```
+
+**Add exclusion (via command)**
+
+```bash
+./bin/phpspec status -e "*Controller, App\Entity\*"
+```
+
+With command, yml parameter will be overwrite.
