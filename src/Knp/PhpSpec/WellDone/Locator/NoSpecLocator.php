@@ -25,10 +25,18 @@ class NoSpecLocator extends PSR0Locator implements ExclusionLocatorInterface
         return $this->findNotSpecResources($this->getFullSrcPath(), $query);
     }
 
-    public function supportsExclusionQuery($query)
+    public function supportsExclusionQuery($query, $delim = ',')
     {
-        $query = preg_replace('/[A-Za-z_\\*]/', '', $query);
-        return empty($query);
+        foreach (explode($delim, $query) as $q) {
+            $q = preg_replace('/[A-Za-z_\\\*]/', '', trim($q));
+
+            if (false === empty($q)) {
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     protected function findNotSpecResources($path, $query = null)

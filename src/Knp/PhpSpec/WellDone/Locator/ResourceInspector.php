@@ -38,7 +38,6 @@ class ResourceInspector
     {
         foreach (explode($delim, $queries) as $query) {
             if (true === $this->matchQuery($resource, trim($query))) {
-
                 return true;
             }
         }
