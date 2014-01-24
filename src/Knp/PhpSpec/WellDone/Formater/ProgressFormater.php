@@ -19,7 +19,7 @@ class ProgressFormater
         $notDone = $this->filter($resources, false);
 
         $length = count($done) + count($notDone);
-        $state = (count($done) * $this->max) / $length;
+        $state = $length > 0 ? (count($done) * $this->max) / $length : $this->max;
 
         $progress = sprintf(
             '<%s>%s</%s>',

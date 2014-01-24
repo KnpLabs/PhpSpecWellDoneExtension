@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Knp\PhpSpec\WellDone\Formater\ProgressFormater;
+use Symfony\Component\Console\Input\InputOption;
 
 class StatusCommand extends Command
 {
@@ -21,12 +22,32 @@ class StatusCommand extends Command
         $this->formater   = $formater;
     }
 
+    public function configure()
+    {
+        $this
+            ->setName('status')
+            ->setDescription('Say which class has spec or not.')
+            ->setDefinition(array(
+                new InputOption('exclude', 'e', InputOption::VALUE_REQUIRED, 'File exclusion pattern (ex : "*Controller, App\Entity\*")', null)
+            ))
+        ;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getApplication()->getContainer();
         $container->configure();
 
-        $resources = $container->get('locator.resource_manager')->locateResources('');
+        $exclusion = $container->getParam('knp.welldone.exclusion', '');
+        if (null !== $input->getOption('exclude')) {
+            $exclusion = $input->getOption('exclude');
+        }
+
+        if (is_array($exclusion)) {
+            $exclusion = implode(', ', $exclusion);
+        }
+
+        $resources = $container->get('locator.resource_manager')->locateResourcesWithExclusion($exclusion);
 
         foreach ($this->buildMessages($resources) as $message) {
             $output->writeln($message);
