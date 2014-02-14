@@ -14,23 +14,18 @@ class Extension implements ExtensionInterface
 {
     public function load(ServiceContainer $container)
     {
-        $this->setupConsole($container);
         $this->setupCommands($container);
         $this->setupLocators($container);
         $this->setupFormatter($container);
         $this->setupUtils($container);
+        $this->setupApplication($container);
     }
 
-    protected function setupConsole(ServiceContainer $container)
+    protected function setupApplication(ServiceContainer $container)
     {
-        $definition = $container->get('console.commands.run')->getDefinition();
-        $definition->addArgument(
-            new InputArgument(
-                'status',
-                InputArgument::OPTIONAL,
-                'Display global status of specifications'
-            )
-        );
+        $app = $GLOBALS['app'];
+
+        $app->add($container->get('console.commands.status'));
     }
 
     protected function setupCommands(ServiceContainer $container)
