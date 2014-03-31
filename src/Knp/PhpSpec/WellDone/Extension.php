@@ -18,14 +18,6 @@ class Extension implements ExtensionInterface
         $this->setupLocators($container);
         $this->setupFormatter($container);
         $this->setupUtils($container);
-        $this->setupApplication($container);
-    }
-
-    protected function setupApplication(ServiceContainer $container)
-    {
-        $app = $GLOBALS['app'];
-
-        $app->add($container->get('console.commands.status'));
     }
 
     protected function setupCommands(ServiceContainer $container)
