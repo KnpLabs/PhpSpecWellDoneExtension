@@ -2,8 +2,8 @@
 
 namespace Knp\PhpSpec\WellDone\Locator;
 
-use PhpSpec\Locator\ResourceManager as BaseManager;
 use PhpSpec\Locator\ResourceLocatorInterface;
+use PhpSpec\Locator\ResourceManager as BaseManager;
 
 class ResourceManager extends BaseManager
 {
@@ -27,7 +27,7 @@ class ResourceManager extends BaseManager
                 continue;
             }
 
-            if (!$locator->supportsQuery($query)) {
+            if ( ! $locator->supportsQuery($query)) {
                 continue;
             }
 
@@ -42,7 +42,7 @@ class ResourceManager extends BaseManager
         $resources = array();
         foreach ($this->locators as $locator) {
             if ($locator instanceof ExclusionLocatorInterface) {
-                if (!$locator->supportsExclusionQuery($query)) {
+                if ( ! $locator->supportsExclusionQuery($query)) {
                     continue;
                 }
 

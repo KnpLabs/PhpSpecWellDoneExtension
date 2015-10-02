@@ -8,7 +8,7 @@ class Filesystem extends BaseFilesystem
 {
     public function getTokens($path)
     {
-        if (!$this->pathExists($path)) {
+        if ( ! $this->pathExists($path)) {
             return;
         }
 

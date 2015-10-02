@@ -4,7 +4,6 @@ namespace Knp\PhpSpec\WellDone\Locator;
 
 use PhpSpec\Locator\PSR0\PSR0Locator;
 use PhpSpec\Locator\PSR0\PSR0Resource;
-use Knp\PhpSpec\WellDone\Locator\ResourceInspector;
 
 class NoSpecLocator extends PSR0Locator implements ExclusionLocatorInterface
 {
@@ -31,7 +30,6 @@ class NoSpecLocator extends PSR0Locator implements ExclusionLocatorInterface
             $q = preg_replace('/[A-Za-z_\\\*]/', '', trim($q));
 
             if (false === empty($q)) {
-
                 return false;
             }
         }
@@ -41,7 +39,7 @@ class NoSpecLocator extends PSR0Locator implements ExclusionLocatorInterface
 
     protected function findNotSpecResources($path, $query = null)
     {
-        if (!$this->getFilesystem()->pathExists($path)) {
+        if ( ! $this->getFilesystem()->pathExists($path)) {
             return array();
         }
 
@@ -49,11 +47,10 @@ class NoSpecLocator extends PSR0Locator implements ExclusionLocatorInterface
         foreach ($this->getFilesystem()->findPhpFilesIn($path) as $file) {
             $resource = $this->createResourceFromSpecFile($file->getRealPath());
             if ($this->inspector->isClass($resource)
-                && !$this->inspector->isAbstract($resource)
-                && !$this->inspector->hasSpec($resource)
-                && !$this->inspector->matchQueries($resource, $query)
+                && ! $this->inspector->isAbstract($resource)
+                && ! $this->inspector->hasSpec($resource)
+                && ! $this->inspector->matchQueries($resource, $query)
             ) {
-
                 $resources[] = $resource;
             }
         }
@@ -78,5 +75,4 @@ class NoSpecLocator extends PSR0Locator implements ExclusionLocatorInterface
     {
         return $this->inspector->getFilesystem();
     }
-
 }

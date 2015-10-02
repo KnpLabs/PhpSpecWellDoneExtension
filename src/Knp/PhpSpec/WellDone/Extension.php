@@ -2,13 +2,12 @@
 
 namespace Knp\PhpSpec\WellDone;
 
-use PhpSpec\Extension\ExtensionInterface;
-use PhpSpec\ServiceContainer;
-use Symfony\Component\Console\Input\InputArgument;
-use Knp\PhpSpec\WellDone\Locator\ResourceManager;
 use Knp\PhpSpec\WellDone\Locator\NoSpecLocator;
 use Knp\PhpSpec\WellDone\Locator\ResourceInspector;
+use Knp\PhpSpec\WellDone\Locator\ResourceManager;
 use Knp\PhpSpec\WellDone\Util\Filesystem;
+use PhpSpec\Extension\ExtensionInterface;
+use PhpSpec\ServiceContainer;
 
 class Extension implements ExtensionInterface
 {
@@ -44,7 +43,6 @@ class Extension implements ExtensionInterface
             $suites = $c->getParam('suites', array('main' => ''));
 
             foreach ($suites as $name => $suite) {
-
                 $suite = $this->loadSuiteInformations($suite);
                 $this->buildDirectories($suite);
 
@@ -67,7 +65,7 @@ class Extension implements ExtensionInterface
     protected function setupUtils(ServiceContainer $container)
     {
         $container->setShared('well.utils.filesystem', function () {
-            return new Filesystem;
+            return new Filesystem();
         });
 
         $container->setShared('well.utils.inspector', function ($c) {
@@ -89,10 +87,10 @@ class Extension implements ExtensionInterface
 
     protected function buildDirectories(array $suite)
     {
-        if (!is_dir($suite['srcPath'])) {
+        if ( ! is_dir($suite['srcPath'])) {
             mkdir($suite['srcPath'], 0777, true);
         }
-        if (!is_dir($suite['specPath'])) {
+        if ( ! is_dir($suite['specPath'])) {
             mkdir($suite['specPath'], 0777, true);
         }
     }

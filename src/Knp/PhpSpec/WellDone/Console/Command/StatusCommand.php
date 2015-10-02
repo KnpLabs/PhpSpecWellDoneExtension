@@ -2,12 +2,12 @@
 
 namespace Knp\PhpSpec\WellDone\Console\Command;
 
+use Knp\PhpSpec\WellDone\Formater\ProgressFormater;
 use PhpSpec\Util\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Knp\PhpSpec\WellDone\Formater\ProgressFormater;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class StatusCommand extends Command
 {
@@ -28,7 +28,7 @@ class StatusCommand extends Command
             ->setName('status')
             ->setDescription('Say which class has spec or not.')
             ->setDefinition(array(
-                new InputOption('exclude', 'e', InputOption::VALUE_REQUIRED, 'File exclusion pattern (ex : "*Controller, App\Entity\*")', null)
+                new InputOption('exclude', 'e', InputOption::VALUE_REQUIRED, 'File exclusion pattern (ex : "*Controller, App\Entity\*")', null),
             ))
         ;
     }
@@ -59,8 +59,8 @@ class StatusCommand extends Command
     protected function buildMessages(array $resources)
     {
         return array_merge(
-            [ '', $this->formater->buildProgressBar($resources) ],
-            [ '', $this->formater->buildState($resources) ],
+            ['', $this->formater->buildProgressBar($resources)],
+            ['', $this->formater->buildState($resources)],
             $this->formater->buildTrace($resources)
         );
     }

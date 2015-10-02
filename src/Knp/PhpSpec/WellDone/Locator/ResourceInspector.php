@@ -2,8 +2,8 @@
 
 namespace Knp\PhpSpec\WellDone\Locator;
 
-use PhpSpec\Util\Filesystem;
 use PhpSpec\Locator\PSR0\PSR0Resource;
+use PhpSpec\Util\Filesystem;
 
 class ResourceInspector
 {
